@@ -1,111 +1,53 @@
-
 #include "main.h"
-#include "renderer.h"
 #include "texture.h"
 
 
-void CTexture::Load(const char *FileName)
+unsigned int LoadTexture(const char * FileName)
 {
-
-	unsigned char	header[18];
-	unsigned char	*image;
-	unsigned int	width, height;
-	unsigned char	depth;
-	unsigned int	bpp;
-	unsigned int	size;
-
-
-	// ヘッダ読み込み
+	unsigned int texture;
+	unsigned char header[18];
+	unsigned char* image;
 	FILE* file;
+	unsigned int width, height;
 	file = fopen(FileName, "rb");
-	assert(file);
 
-	fread(header, sizeof(header), 1, file);
-
-
-	// 画像サイズ取得
-	width = header[13] * 256 + header[12];
+	fread(header, 1, sizeof(header), file);  
+	width = header[13] * 256 + header[12];   // バイトオーダー、 エンディアン
 	height = header[15] * 256 + header[14];
-	depth = header[16];
 
-	if (depth == 32)
-		bpp = 4;
-	else if (depth == 24)
-		bpp = 3;
-	else
-		bpp = 0;
+	image = new unsigned char[width * height * 4];
 
-	if (bpp != 4) {
-		assert(false);
-	}
+	// TGA file format
+	// ___________________
+	// | header(18byte)  | (width, height data)
+	// -------------------
+	// | body(color data)|
+	// -------------------
 
-	size = width * height * bpp;
-
-	// メモリ確保
-	image = (unsigned char*)new unsigned char[size];
-
-	// 画像読み込み
-	fread(image, size, 1, file);
-
-	// R<->B
 	for (unsigned int y = 0; y < height; y++)
 	{
 		for (unsigned int x = 0; x < width; x++)
 		{
-			unsigned char c;
-			c = image[(y * width + x) * bpp + 0];
-			image[(y * width + x) * bpp + 0] = image[(y * width + x) * bpp + 2];
-			image[(y * width + x) * bpp + 2] = c;
+			image[(y * width + x) * 4 + 2] = fgetc(file);  // fgetc 1byte get
+
+			image[(y * width + x) * 4 + 1] = fgetc(file);
+			image[(y * width + x) * 4 + 0] = fgetc(file);
+			image[(y * width + x) * 4 + 3] = fgetc(file);
 		}
 	}
-
 	fclose(file);
+	// TGA data            |B|G|R|A|B|G|R|A|    
+	// opengl texture data |R|G|B|A|R|G|B|A|
 
-
-	D3D11_TEXTURE2D_DESC desc;
-	desc.Width = width;
-	desc.Height = height;
-	desc.MipLevels = 1;
-	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	desc.CPUAccessFlags = 0;
-	desc.MiscFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA initData;
-	initData.pSysMem = image;
-	initData.SysMemPitch = width * 4;
-	initData.SysMemSlicePitch = size;
-
-	auto hr = CRenderer::GetDevice()->CreateTexture2D(&desc, &initData, &m_Texture);
-	if (FAILED(hr)) {
-		assert(false);
-	}
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC SRVDesc = {};
-	SRVDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	SRVDesc.Texture2D.MipLevels = 1;
-
-	hr = CRenderer::GetDevice()->CreateShaderResourceView(m_Texture, &SRVDesc, &m_ShaderResourceView);
-	if (FAILED(hr))
-	{
-		assert(false);
-	}
-
-
-	delete image;
+	glGenTextures(1, &texture); // テクスチャ生成
+	glBindTexture(GL_TEXTURE_2D, texture); // テクスチャ設定
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image); // テクスチャに色設定
+	glBindTexture(GL_TEXTURE_2D, 0);
+	delete[] image;
+	return texture;
 }
-
-
-void CTexture::Unload()
-{
-	m_Texture->Release();
-	m_ShaderResourceView->Release();
-}
-
-
-

@@ -1,6 +1,7 @@
 #pragma once
 
-class CScene;
+
+
 class CManager
 {
 public:
@@ -8,5 +9,5 @@ public:
 	static void Uninit();
 	static void Update();
 	static void Draw();
-	static CScene* GetScene();
+
 };

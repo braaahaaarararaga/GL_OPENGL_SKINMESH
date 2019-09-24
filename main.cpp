@@ -3,14 +3,21 @@
 
 #include "main.h"
 #include "manager.h"
+#include "renderer.h"
+#include "polygon.h"
+#include "camera.h"
+#include "field.h"
+#include "cube.h"
+#include "input.h"
+#include "light.h"
+#include "model.h"
+#include "modelAnimation.h"
 
-
-const char* CLASS_NAME = "DX11AppClass";
-const char* WINDOW_NAME = "DX11";
+const char* CLASS_NAME = "OpenGALAppClass";
+const char* WINDOW_NAME = "OpenGAY";
 
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
 
 HWND g_Window;
 
@@ -57,7 +64,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 
 	// 初期化処理(ウィンドウを作成してから行う)
-	CManager::Init();
+	Init(g_Window);
 
 
 	// ウインドウの表示(初期化処理の後に行う)
@@ -100,10 +107,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 				dwExecLastTime = dwCurrentTime;
 
 				// 更新処理
-				CManager::Update();
+				Update();
 
 				// 描画処理
-				CManager::Draw();
+				Draw();
 			}
 		}
 	}
@@ -114,7 +121,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	UnregisterClass(CLASS_NAME, wcex.hInstance);
 
 	// 終了処理
-	CManager::Uninit();
+	Uninit();
 
 	return (int)msg.wParam;
 }
@@ -148,3 +155,55 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
+//  Drag Drop
+//  case : WM_CREATE:  
+//   {  DragAcceptFiles(window, TRUE); break;}
+//   ..   case WM_DROPFILES:
+//   { HDROP drop = (HDROP)wParam;
+//     char fileName[MAX_PATH];
+//     DragQueryFileA(Drop, 0, fileName, MAX_PATH); ...  break ;}
+
+
+void Init(HWND wnd)
+{
+	CInput::Init();
+	InitRenderer(wnd);
+	InitModel();
+	InitModelAnimation();
+	InitPolygon();
+}
+
+void Uninit()
+{
+	UninitModel();
+	UninitModelAnimation();
+	CInput::Uninit();
+	UninitRenderer();
+}
+
+void Update()
+{
+	CInput::Update();
+	UpdateModel();
+	UpdateModelAnimation();
+	UpdateCamera();
+	
+}
+
+void Draw()
+{
+	BeginRenderer();
+
+	DrawCamera()
+		;
+	SetLight();
+	//DrawCube();
+	
+	DrawModel();
+	DrawModelAnimation();
+	
+	DrawField();
+	DrawPolygon();
+
+	EndRenderer();
+}
