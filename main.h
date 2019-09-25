@@ -6,6 +6,7 @@
 #include <windows.h>
 #undef NOMINMAX
 #include <assert.h>
+#include <CommCtrl.h>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -13,6 +14,7 @@
 #pragma comment(lib, "glu32.lib")
 #pragma comment (lib, "winmm.lib")
 #pragma comment (lib, "xaudio2.lib")
+#pragma comment (lib, "Comctl32.lib")
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
@@ -36,3 +38,5 @@ void Uninit();
 void Update();
 
 void Draw();
+
+void LoadModel(const char* filepath);

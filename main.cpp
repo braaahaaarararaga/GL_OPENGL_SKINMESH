@@ -12,6 +12,8 @@
 #include "light.h"
 #include "model.h"
 #include "modelAnimation.h"
+#include "resource.h"
+#include <memory>
 
 const char* CLASS_NAME = "OpenGALAppClass";
 const char* WINDOW_NAME = "OpenGAY";
@@ -40,7 +42,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		NULL,
 		LoadCursor(NULL, IDC_ARROW),
 		(HBRUSH)(COLOR_WINDOW + 1),
-		NULL,
+		MAKEINTRESOURCE(IDR_MENU1),
 		CLASS_NAME,
 		NULL
 	};
@@ -56,7 +58,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
 		(SCREEN_WIDTH + GetSystemMetrics(SM_CXDLGFRAME) * 2),
-		(SCREEN_HEIGHT + GetSystemMetrics(SM_CXDLGFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION)),
+		(SCREEN_HEIGHT + GetSystemMetrics(SM_CXDLGFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION) + GetSystemMetrics(SM_CYMENU)),
 		NULL,
 		NULL,
 		hInstance,
@@ -147,7 +149,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		break;
-
+	case WM_COMMAND:
+	{
+		switch (LOWORD(wParam))
+		{
+		case ID_BUTT_PUBE:
+			MessageBoxA(g_Window, "DONT TOUCH PUBE!!", "CAPTION", MB_OK);
+			break;
+		case ID_BUTT_CLICK:
+			MessageBoxA(g_Window, "pubeÇÕípçúÇÃà”ñ°ÇæÇÊÇÒÅ`", "CAPTION", MB_OK);
+			break;
+		case ID_BOX2_X1:
+		{
+			OPENFILENAME of;
+			char fileName[MAX_PATH];
+			ZeroMemory(fileName, MAX_PATH);
+			memset(&of, 0, sizeof(of));
+			of.lStructSize = sizeof(of);
+			of.hwndOwner = g_Window;
+			of.lpstrFilter = "FBXÉtÉ@ÉCÉã(*.fbx)\0*.fbx\0";
+			of.lpstrTitle = "Open";
+			of.lpstrFile = fileName;
+			of.nMaxFile = MAX_PATH;
+			of.Flags = OFN_PATHMUSTEXIST;
+			of.lpstrDefExt = "fbx";
+			if (GetOpenFileName(&of))
+			{
+				LoadModel(fileName);
+			}
+			break;
+		}
+		default:
+			break;
+		}
+	}
 	default:
 		break;
 	}
@@ -163,21 +198,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 //     char fileName[MAX_PATH];
 //     DragQueryFileA(Drop, 0, fileName, MAX_PATH); ...  break ;}
 
-
+std::unique_ptr<ModelAnimation> model;
 void Init(HWND wnd)
 {
 	CInput::Init();
 	InitRenderer(wnd);
 	InitModel();
-	InitModelAnimation();
+	model = std::make_unique<ModelAnimation>("./asset/Model/mixamo/Walking2.fbx");
 	InitPolygon();
 }
 
 void Uninit()
 {
 	UninitModel();
-	UninitModelAnimation();
 	CInput::Uninit();
+	model.release();
 	UninitRenderer();
 }
 
@@ -185,9 +220,15 @@ void Update()
 {
 	CInput::Update();
 	UpdateModel();
-	UpdateModelAnimation();
+	model->Update();
 	UpdateCamera();
 	
+}
+
+void LoadModel(const char* filepath)
+{
+	model.release();
+	model = std::make_unique<ModelAnimation>(filepath);
 }
 
 void Draw()
@@ -200,8 +241,8 @@ void Draw()
 	//DrawCube();
 	
 	DrawModel();
-	DrawModelAnimation();
-	
+	model->Draw();
+
 	DrawField();
 	DrawPolygon();
 
