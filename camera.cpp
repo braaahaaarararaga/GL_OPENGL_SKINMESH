@@ -47,6 +47,7 @@ void Camera3D::Update()
 	x = sin(xangle / 180 * 3.14f) * distance + xLookAt;
 	y = yangle + yLookAt;
 	z = cos(xangle / 180 * 3.14f) * distance + zLookAt;
+	// test
 	
 
 }
