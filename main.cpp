@@ -137,17 +137,37 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	switch(uMsg)
 	{
+	case WM_ACTIVATEAPP:
+		Keyboard::ProcessMessage(uMsg, wParam, lParam);
+	case WM_INPUT:
+	case WM_MOUSEMOVE:
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+	case WM_MOUSEWHEEL:
+	case WM_XBUTTONDOWN:
+	case WM_XBUTTONUP:
+	case WM_MOUSEHOVER:
+		Mouse::ProcessMessage(uMsg, wParam, lParam);
+		break;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
 
 	case WM_KEYDOWN:
-		switch(wParam)
+		switch (wParam)
 		{
 		case VK_ESCAPE:
 			DestroyWindow(hWnd);
 			break;
 		}
+	case WM_SYSKEYDOWN:
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		Keyboard::ProcessMessage(uMsg, wParam, lParam);
 		break;
 	case WM_COMMAND:
 	{
@@ -199,6 +219,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 //     DragQueryFileA(Drop, 0, fileName, MAX_PATH); ...  break ;}
 
 std::unique_ptr<ModelAnimation> model;
+Camera3D* camera;
 void Init(HWND wnd)
 {
 	CInput::Init();
@@ -206,6 +227,7 @@ void Init(HWND wnd)
 	InitModel();
 	model = std::make_unique<ModelAnimation>("./asset/Model/mixamo/Walking2.fbx");
 	InitPolygon();
+	camera = new Camera3D();
 }
 
 void Uninit()
@@ -214,14 +236,15 @@ void Uninit()
 	CInput::Uninit();
 	model.release();
 	UninitRenderer();
+	delete camera;
 }
 
 void Update()
 {
-	CInput::Update();
 	UpdateModel();
 	model->Update();
-	UpdateCamera();
+	camera->Update();
+	CInput::Update();
 	
 }
 
@@ -235,8 +258,8 @@ void Draw()
 {
 	BeginRenderer();
 
-	DrawCamera()
-		;
+	camera->Draw();
+
 	SetLight();
 	//DrawCube();
 	

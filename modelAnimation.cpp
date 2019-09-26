@@ -86,7 +86,6 @@ void ModelAnimation::CreateBone(aiNode * Node)
 
 ModelAnimation::ModelAnimation(const char * filepath)
 {
-	const std::string modelPath = "asset/model/SambaDancing2.fbx";
 	g_Scene = aiImportFile(filepath, aiProcessPreset_TargetRealtime_MaxQuality);
 	CreateBone(g_Scene->mRootNode);
 	g_DeformVertex = new std::vector<DEFORM_VERTEX>[g_Scene->mNumMeshes];
@@ -170,69 +169,85 @@ void ModelAnimation::Update()
 			matrix[2] = g_Bone[vertex.BoneName[2]].Matrix;
 			matrix[3] = g_Bone[vertex.BoneName[3]].Matrix;
 			outMatrix.a1 = matXfloat(matrix[0], vertex.BoneWeight[0]).a1
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).a1
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).a1
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).a1;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).a1
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).a1
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).a1;
+
 			outMatrix.a2 = matXfloat(matrix[0], vertex.BoneWeight[0]).a2
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).a2
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).a2
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).a2;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).a2
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).a2
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).a2;
+
 			outMatrix.a3 = matXfloat(matrix[0], vertex.BoneWeight[0]).a3
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).a3
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).a3
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).a3;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).a3
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).a3
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).a3;
+
 			outMatrix.a4 = matXfloat(matrix[0], vertex.BoneWeight[0]).a4
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).a4
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).a4
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).a4;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).a4
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).a4
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).a4;
+
 			outMatrix.b1 = matXfloat(matrix[0], vertex.BoneWeight[0]).b1
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).b1
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).b1
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).b1;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).b1
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).b1
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).b1;
+
 			outMatrix.b2 = matXfloat(matrix[0], vertex.BoneWeight[0]).b2
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).b2
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).b2
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).b2;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).b2
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).b2
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).b2;
+
 			outMatrix.b3 = matXfloat(matrix[0], vertex.BoneWeight[0]).b3
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).b3
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).b3
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).b3;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).b3
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).b3
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).b3;
+
 			outMatrix.b4 = matXfloat(matrix[0], vertex.BoneWeight[0]).b4
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).b4
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).b4
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).b4;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).b4
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).b4
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).b4;
+
 			outMatrix.c1 = matXfloat(matrix[0], vertex.BoneWeight[0]).c1
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).c1
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).c1
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).c1;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).c1
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).c1
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).c1;
+
 			outMatrix.c2 = matXfloat(matrix[0], vertex.BoneWeight[0]).c2
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).c2
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).c2
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).c2;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).c2
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).c2
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).c2;
+
 			outMatrix.c3 = matXfloat(matrix[0], vertex.BoneWeight[0]).c3
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).c3
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).c3
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).c3;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).c3
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).c3
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).c3;
+
 			outMatrix.c4 = matXfloat(matrix[0], vertex.BoneWeight[0]).c4
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).c4
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).c4
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).a4;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).c4
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).c4
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).c4;
+
 			outMatrix.d1 = matXfloat(matrix[0], vertex.BoneWeight[0]).d1
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).d1
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).d1
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).d1;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).d1
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).d1
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).d1;
+
 			outMatrix.d2 = matXfloat(matrix[0], vertex.BoneWeight[0]).d2
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).d2
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).d2
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).d2;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).d2
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).d2
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).d2;
+
 			outMatrix.d3 = matXfloat(matrix[0], vertex.BoneWeight[0]).d3
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).d3
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).d3
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).d3;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).d3
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).d3
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).d3;
+
 			outMatrix.d4 = matXfloat(matrix[0], vertex.BoneWeight[0]).d4
-				+ matXfloat(matrix[1], vertex.BoneWeight[1]).d4
-				+ matXfloat(matrix[2], vertex.BoneWeight[2]).d4
-				+ matXfloat(matrix[3], vertex.BoneWeight[3]).d4;
+						 + matXfloat(matrix[1], vertex.BoneWeight[1]).d4
+						 + matXfloat(matrix[2], vertex.BoneWeight[2]).d4
+						 + matXfloat(matrix[3], vertex.BoneWeight[3]).d4;
+
 
 			vertex.DeformPosition = vertex.Position;
 			aiTransformVecByMatrix4(&vertex.DeformPosition, &outMatrix);

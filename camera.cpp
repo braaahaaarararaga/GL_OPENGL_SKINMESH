@@ -2,26 +2,23 @@
 #include "camera.h"
 #include "input.h"
 
-float CAMx = 0.0f;
-float CAMy = 5.0f;
-float CAMz = 10.0f;
-float xangle = 0.0f;
 
-void DrawCamera()
+
+void Camera3D::Draw()
 {
-	double aspect = 960.0 / 540.0;
-	glViewport(0, 0, 960, 540);
+	double aspect = (double)SCREEN_WIDTH / (double)SCREEN_HEIGHT;
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(45.0, aspect, 1.0, 1000.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(	CAMx, CAMy, CAMz,	// 視点
-				0.0, 5.0, 0.0,		// 注視点
-				0.0, 1.0, 0.0);		// 上ベクトル
+	gluLookAt(x, y, z,	// 視点
+		xLookAt, yLookAt, zLookAt,		// 注視点
+		0.0, 1.0, 0.0);		// 上ベクトル
 }
 
-void UpdateCamera()
+void Camera3D::Update()
 {
 	if (CInput::GetKeyPress(VK_LEFT))
 	{
@@ -31,8 +28,25 @@ void UpdateCamera()
 	{
 		xangle -= 10.0f;
 	}
-
-	CAMx = sin(xangle / 180 * 3.14) * 10;
-	CAMz = cos(xangle / 180 * 3.14) * 10;
+	if (Mouse::Get().GetState().leftButton && (Mouse::Get().mouseTracker.leftButton == Mouse::Get().mouseTracker.HELD))
+	{
+		yangle += (Mouse::Get().GetState().y - Mouse::Get().mouseTracker.GetLastState().y) * 0.05f;
+		float mouseX = Mouse::Get().GetState().x;
+		float lastMouseX = Mouse::Get().mouseTracker.GetLastState().x;
+		xangle += (mouseX - lastMouseX) * 0.5f;
+	}
+	if (Mouse::Get().GetState().rightButton && (Mouse::Get().mouseTracker.rightButton == Mouse::Get().mouseTracker.HELD))
+	{
+		yLookAt -= (Mouse::Get().GetState().y - Mouse::Get().mouseTracker.GetLastState().y) * 0.05f;
+	}
+	if (Mouse::Get().GetState().middleButton && (Mouse::Get().mouseTracker.middleButton == Mouse::Get().mouseTracker.HELD))
+	{
+		distance += (Mouse::Get().GetState().y - Mouse::Get().mouseTracker.GetLastState().y) * 0.05f;
+		distance = std::max<float>(distance, 0.1f);
+	}
+	x = sin(xangle / 180 * 3.14f) * distance + xLookAt;
+	y = yangle + yLookAt;
+	z = cos(xangle / 180 * 3.14f) * distance + zLookAt;
+	
 
 }
